@@ -11,9 +11,10 @@ Hopefully I can make it better in the future, but health reasons and being busy 
 
 <BR>
 
-weapon_redeemer - Redeemer from Unreal Tournament
+weapon_redeemer - Redeemer from Unreal Tournament and Half-Life Weapons Edition
 
-    (Video)[https://youtu.be/Z9VHXZgFfbc]
+[Video](https://youtu.be/Z9VHXZgFfbc)
 
-array<bool> g_bIsNukeFlying(33);
+`array<bool> g_bIsNukeFlying(33);`
+
 Needs to be put somewhere, such as in a map script.
