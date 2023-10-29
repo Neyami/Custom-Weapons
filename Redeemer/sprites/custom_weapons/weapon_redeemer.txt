@@ -1,0 +1,6 @@
+4
+
+weapon		640 custom_weapons/redeemer	0	0	170	52
+weapon_s	640 custom_weapons/redeemer	0	0	170	52
+ammo		640 custom_weapons/redeemer		0	55	25	25
+crosshair	640 custom_weapons/redeemer_crosshairs	0	0	61	61
