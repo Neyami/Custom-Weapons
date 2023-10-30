@@ -12,22 +12,27 @@ Hopefully I can make it better in the future, but health reasons and being busy 
 <BR>
 
 # Redeemer
+From Unreal Tournament and Half-Life Weapons Edition.
+
+[Video](https://youtu.be/Z9VHXZgFfbc)
+
 weapon_redeemer
 
 `RegisterRedeemer();`
 
-From Unreal Tournament and Half-Life Weapons Edition
-
-[Video](https://youtu.be/Z9VHXZgFfbc)
+Also
 
 `array<bool> g_bIsNukeFlying(33);`
 
 Needs to be put somewhere, such as in a map script.
 
+
 <BR>
 <BR>
 
 SCIPG
+
+Don't remember where it's from.
 
 weapon_scientist
 
@@ -35,6 +40,3 @@ weapon_scientist
 `RegisterSciPG();`
 `RegisterSciPGAmmoBox();`
 `RegisterSciPGBolt();`
-
-
-Don't remember where it's from.
