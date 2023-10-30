@@ -14,6 +14,8 @@ Hopefully I can make it better in the future, but health reasons and being busy 
 # Redeemer
 weapon_redeemer
 
+`RegisterRedeemer();`
+
 From Unreal Tournament and Half-Life Weapons Edition
 
 [Video](https://youtu.be/Z9VHXZgFfbc)
@@ -29,10 +31,10 @@ SCIPG
 
 weapon_scientist
 
-`
-RegisterSciPG();
-RegisterSciPGAmmoBox();
-RegisterSciPGBolt();
-`
+
+`RegisterSciPG();`
+`RegisterSciPGAmmoBox();`
+`RegisterSciPGBolt();`
+
 
 Don't remember where it's from.
