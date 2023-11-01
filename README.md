@@ -54,6 +54,7 @@ From Half-Life Weapon Edition.
 ENTITIES
 
 `weapon_biorifle`
+
 `ammo_biocharge`
 
 AMMO
