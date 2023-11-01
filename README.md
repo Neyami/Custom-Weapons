@@ -30,7 +30,7 @@ Needs to be put somewhere, such as in a map script.
 <BR>
 <BR>
 
-SCIPG
+# SCIPG
 
 Don't remember where it's from.
 
@@ -40,3 +40,18 @@ weapon_scientist
 `RegisterSciPG();`
 `RegisterSciPGAmmoBox();`
 `RegisterSciPGBolt();`
+
+
+<BR>
+<BR>
+
+# Bio Rifle
+
+From Half-Life Weapon Edition.
+
+weapon_biorifle
+
+
+`RegisterBiorifle();`
+`RegisterBRAmmoBox();`
+`RegisterBiomass();`
