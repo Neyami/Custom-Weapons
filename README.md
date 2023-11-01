@@ -49,9 +49,18 @@ weapon_scientist
 
 From Half-Life Weapon Edition.
 
-weapon_biorifle
+[Video](https://youtu.be/0IRgOqIsMRg)
 
+ENTITIES
 
+`weapon_biorifle`
+`ammo_biocharge`
+
+AMMO
+
+`biocharge`
+
+REGISTRATION FUNCTIONS
 `RegisterBiorifle();`
 `RegisterBRAmmoBox();`
 `RegisterBiomass();`
