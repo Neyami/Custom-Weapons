@@ -1,0 +1,5 @@
+4
+weapon		640 custom_weapons/biorifle 0 0 168 50
+weapon_s	640 custom_weapons/biorifle 0 0 168 50
+ammo		640 custom_weapons/biorifle 0 50 15 24
+crosshair	640 custom_weapons/biorifle_crosshairs 0 0 61 61
