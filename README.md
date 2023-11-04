@@ -45,8 +45,20 @@ Needs to be put somewhere, such as in a map script.
 
 Don't remember where it's from.
 
-weapon_scientist
+ENTITIES
 
+`weapon_scientist` - Weapon
+
+`ammo_scientist` - Ammo box
+
+`scibolt` - Projectile
+
+AMMO NAME
+
+`scientist`
+
+
+REGISTRATION FUNCTIONS
 
 `RegisterSciPG();`
 
