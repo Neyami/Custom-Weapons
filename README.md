@@ -16,8 +16,19 @@ From Unreal Tournament and Half-Life Weapons Edition.
 
 [Video](https://youtu.be/Z9VHXZgFfbc)
 
-weapon_redeemer
+ENTITIES
 
+`weapon_redeemer` - Weapon
+
+`ammo_nuke` - Ammo box
+
+`nuke` - Projectile
+
+AMMO NAME
+
+`nuke`
+
+REGISTRATION FUNCTIONS
 `RegisterRedeemer();`
 
 Also
@@ -38,7 +49,9 @@ weapon_scientist
 
 
 `RegisterSciPG();`
+
 `RegisterSciPGAmmoBox();`
+
 `RegisterSciPGBolt();`
 
 
@@ -53,15 +66,19 @@ From Half-Life Weapon Edition.
 
 ENTITIES
 
-`weapon_biorifle`
+`weapon_biorifle` - Weapon
 
-`ammo_biocharge`
+`ammo_biocharge` - Ammo box
 
-AMMO
+`biomass` - Projectile
+
+AMMO NAME
 
 `biocharge`
 
 REGISTRATION FUNCTIONS
 `RegisterBiorifle();`
+
 `RegisterBRAmmoBox();`
+
 `RegisterBiomass();`
