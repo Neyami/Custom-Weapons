@@ -98,7 +98,7 @@ REGISTRATION FUNCTIONS
 
 # Remote Control Apache
 
-* This is a port of amx_apache by "KRoTaL, Fox-NL" from [Allied Mods](https://forums.alliedmods.net/showthread.php?t=50638)
+This is a port of amx_apache by "KRoTaL, Fox-NL" from [Allied Mods](https://forums.alliedmods.net/showthread.php?t=50638)
 
 [Video1](https://youtu.be/FJpwvlEX4dY) -- [Video2](https://youtu.be/GMQKREr5uEU)
 
