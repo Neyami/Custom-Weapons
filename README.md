@@ -100,6 +100,8 @@ REGISTRATION FUNCTIONS
 
 * This is a port of amx_apache by "KRoTaL, Fox-NL" from [Allied Mods](https://forums.alliedmods.net/showthread.php?t=50638)
 
+[Video1](https://youtu.be/FJpwvlEX4dY) -- [Video2](https://youtu.be/GMQKREr5uEU)
+
 
 * USAGE
     * Use some give command to give yourself the weapon "weapon_apache".
