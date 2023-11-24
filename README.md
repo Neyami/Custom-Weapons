@@ -1,4 +1,3 @@
-# Custom-Weapons
 Various weapons ported to Sven Co-op.
 
 They might not be the latest versions that I've made, but they are working releases
@@ -94,3 +93,29 @@ REGISTRATION FUNCTIONS
 `RegisterBRAmmoBox();`
 
 `RegisterBiomass();`
+
+<BR>
+
+# Remote Control Apache
+
+* This is a port of amx_apache by "KRoTaL, Fox-NL" from [Allied Mods](https://forums.alliedmods.net/showthread.php?t=50638)
+
+
+* USAGE
+    * Use some give command to give yourself the weapon "weapon_apache".
+Such as .player_give @me weapon_apache from [AFBase](https://github.com/Zode/AFBase)
+
+    * When selected, use Primary Attack to spawn a small Apache helicopter that you control with your mouse and movement keys.
+
+
+* CONTROLS
+    * Forward increases speed
+    * Back decreases speed
+    * Jump increases elevation (makes it go up)
+    * Crouch decreases elevation (makes it go down)
+    * Strafe Left/Right makes it strafe (when speed is over 0, it's a bit weird because I suck at math :D)
+    * +use is the break (the +speed key (IN_RUN) doesn't work ¯\_(ツ)_/¯)
+    * Primary Fire fires the gun
+    * Secondary Fire fires ze missiles
+    * Tertiary Fire toggles stealth (almost invisible, green screen, lower max-speed and damage)
+    * Reload drops bombs
