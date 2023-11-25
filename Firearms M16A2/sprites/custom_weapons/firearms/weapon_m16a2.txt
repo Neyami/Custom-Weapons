@@ -1,0 +1,6 @@
+5
+weapon			640 custom_weapons/firearms/640hud04	0	135	170	45
+weapon_s		640 custom_weapons/firearms/640hud04_2	0	135	170	45
+ammo			640 custom_weapons/firearms/640hud01_2	96	232	15	24
+ammo2			640 custom_weapons/firearms/640hud01_2	176	232	15	24
+crosshair       640 ofch1  0  0   24  24
