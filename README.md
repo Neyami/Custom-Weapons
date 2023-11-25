@@ -96,6 +96,29 @@ REGISTRATION FUNCTIONS
 
 <BR>
 
+# M16A2
+
+From Firearms.
+
+[Video](https://youtu.be/ETlH_rKM_Ws)
+
+ENTITIES
+
+`weapon_m16a2` - Weapon
+
+`m203nade` - Projectile
+
+AMMO NAME
+
+`556`
+
+`ARgrenades`
+
+REGISTRATION FUNCTIONS
+`fa_m16a2::Register();`
+
+<BR>
+
 # Remote Control Apache
 
 This is a port of amx_apache by "KRoTaL, Fox-NL" from [Allied Mods](https://forums.alliedmods.net/showthread.php?t=50638)
