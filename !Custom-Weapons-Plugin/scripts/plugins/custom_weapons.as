@@ -1,7 +1,7 @@
 #include "../maps/hunger/weapons/baseweapon"
 
 //Comment the #include and Register lines of the weapons you don't want.
-//Put // in front of the lines.
+//Put // in front of the lines to do so.
 #include "../custom_weapons/weapon_biorifle"
 #include "../custom_weapons/firearms/weapon_m16a2"
 #include "../custom_weapons/weapon_apache"
