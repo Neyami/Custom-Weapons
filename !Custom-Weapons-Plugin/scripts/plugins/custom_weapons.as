@@ -1,5 +1,7 @@
 #include "../maps/hunger/weapons/baseweapon"
 
+#include "../custom_weapons/weapon_biorifle"
+
 void PluginInit()
 {
 	g_Module.ScriptInfo.SetAuthor( "Nero" );
@@ -8,4 +10,5 @@ void PluginInit()
 
 void MapInit()
 {
+	biorifle::Register();
 }
