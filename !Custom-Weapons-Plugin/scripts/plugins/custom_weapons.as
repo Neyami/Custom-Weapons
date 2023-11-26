@@ -6,6 +6,7 @@
 #include "../custom_weapons/firearms/weapon_m16a2"
 #include "../custom_weapons/weapon_apache"
 #include "../custom_weapons/weapon_redeemer"
+#include "../custom_weapons/weapon_scientist"
 
 void PluginInit()
 {
@@ -19,4 +20,5 @@ void MapInit()
 	fa_m16a2::Register();
 	apacheweapon::Register();
 	redeemer::Register();
+	scipg::Register();
 }
