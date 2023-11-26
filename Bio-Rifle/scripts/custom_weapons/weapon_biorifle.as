@@ -583,6 +583,7 @@ void Register()
 {
 	g_CustomEntityFuncs.RegisterCustomEntity( "biorifle::CWeaponBiorifle", "weapon_biorifle" );
 	g_CustomEntityFuncs.RegisterCustomEntity( "biorifle::BRAmmoBox", "ammo_biocharge" );
+	g_CustomEntityFuncs.RegisterCustomEntity( "biorifle::CBiomass", "biomass" );
 	g_ItemRegistry.RegisterWeapon( "weapon_biorifle", "custom_weapons", "biocharge" );
 }
 
