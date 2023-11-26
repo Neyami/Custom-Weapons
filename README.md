@@ -1,5 +1,9 @@
 Various weapons ported to Sven Co-op.
 
+All weapons are placed into their own folders, just copy the folders inside the weapon folder into the Sven Co-op folder.
+
+Use the plugin to easily register the weapons if you don't use a buymenu plugin.
+
 They might not be 100% completed, but it's mostly tweaks and cosmetic.
 
 There might be changes made to the game that cause the scripts to fail and there's nothing I can do about it at this time. But the fixes should be simple.
