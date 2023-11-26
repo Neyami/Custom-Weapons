@@ -1,6 +1,6 @@
 Various weapons ported to Sven Co-op.
 
-They might not be the latest versions that I've made, but they are working releases
+They might not be 100% completed, but it's mostly tweaks and cosmetic.
 
 There might be changes made to the game that cause the scripts to fail and there's nothing I can do about it at this time. But the fixes should be simple.
 
