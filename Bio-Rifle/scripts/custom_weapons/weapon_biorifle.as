@@ -1,5 +1,3 @@
-#include "proj_biomass"
-
 namespace biorifle
 {
 
@@ -15,6 +13,16 @@ const string BR_MODEL_VIEW		= "models/custom_weapons/biorifle/v_biorifle.mdl";
 const string BR_MODEL_PLAYER	= "models/custom_weapons/biorifle/p_biorifle.mdl";
 const string BR_SOUND_FIRE		= "custom_weapons/biorifle/biorifle_fire.wav";
 const string BR_SOUND_DRY		= "custom_weapons/biorifle/biorifle_dryfire.wav";
+
+const int SF_DETONATE = 0x0001;
+const float ATTN_LOW_HIGH = 0.5;
+const float BM_EXPLOSION_VOLUME = 0.5;
+
+enum biomasscode_e
+{
+	BIOMASS_DETONATE = 0,
+	BIOMASS_RELEASE
+};
 
 enum biorifle_e
 {
