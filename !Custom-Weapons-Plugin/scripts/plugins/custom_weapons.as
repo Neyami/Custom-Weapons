@@ -8,6 +8,9 @@
 #include "../custom_weapons/weapon_redeemer"
 #include "../custom_weapons/weapon_scientist"
 
+//Required for the Redeemer
+array<bool> g_bIsNukeFlying(33);
+
 void PluginInit()
 {
 	g_Module.ScriptInfo.SetAuthor( "Nero" );
