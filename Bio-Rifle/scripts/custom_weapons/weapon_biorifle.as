@@ -1,5 +1,8 @@
 #include "proj_biomass"
 
+namespace biorifle
+{
+
 const int BIORIFLE_DAMAGE		= 60;
 const int BIORIFLE_WEIGHT		= 36;
 const int BR_MAX_CLIP			= 18;
@@ -244,13 +247,11 @@ class BRAmmoBox : ScriptBasePlayerAmmoEntity
 	}
 }
 
-void RegisterBiorifle()
+void Register()
 {
-	g_CustomEntityFuncs.RegisterCustomEntity( "CWeaponBiorifle", "weapon_biorifle" );
+	g_CustomEntityFuncs.RegisterCustomEntity( "biorifle::CWeaponBiorifle", "weapon_biorifle" );
+	g_CustomEntityFuncs.RegisterCustomEntity( "biorifle::BRAmmoBox", "ammo_biocharge" );
 	g_ItemRegistry.RegisterWeapon( "weapon_biorifle", "custom_weapons", "biocharge" );
 }
 
-void RegisterBRAmmoBox()
-{
-	g_CustomEntityFuncs.RegisterCustomEntity( "BRAmmoBox", "ammo_biocharge" );
-}
+} //namespace biorifle END
