@@ -28,7 +28,7 @@ AMMO NAME
 `nuke`
 
 REGISTRATION FUNCTIONS
-`RegisterRedeemer();`
+`redeemer::Register();`
 
 Also
 
@@ -59,11 +59,7 @@ AMMO NAME
 
 REGISTRATION FUNCTIONS
 
-`RegisterSciPG();`
-
-`RegisterSciPGAmmoBox();`
-
-`RegisterSciPGBolt();`
+`scipg::Register();`
 
 
 <BR>
@@ -88,11 +84,7 @@ AMMO NAME
 `biocharge`
 
 REGISTRATION FUNCTIONS
-`RegisterBiorifle();`
-
-`RegisterBRAmmoBox();`
-
-`RegisterBiomass();`
+`biorifle::Register();`
 
 <BR>
 
