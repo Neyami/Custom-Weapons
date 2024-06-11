@@ -116,7 +116,13 @@ class weapon_redeemer : ScriptBasePlayerWeaponEntity
 
 	bool Deploy()
 	{
-		return self.DefaultDeploy( self.GetV_Model( MODEL_VIEW ), self.GetP_Model( MODEL_PLAYER ), REDEEMER_DRAW, "gauss" );
+		bool bResult;
+		{
+			bResult = self.DefaultDeploy( self.GetV_Model(MODEL_VIEW), self.GetP_Model(MODEL_PLAYER), REDEEMER_DRAW, "gauss" );
+			self.m_flTimeWeaponIdle = self.m_flNextPrimaryAttack = self.m_flNextSecondaryAttack = g_Engine.time + 1.0;
+
+			return bResult;
+		}
 	}
 
 	bool CanHolster()
