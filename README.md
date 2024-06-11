@@ -19,30 +19,20 @@ From Unreal Tournament and Half-Life Weapons Edition.
 
 [Video](https://youtu.be/Z9VHXZgFfbc)
 
-ENTITIES
+ENTITIES  
+`weapon_redeemer` - Weapon  
+`ammo_nuke` - Ammo box  
+`proj_nuke` - Projectile  
 
-`weapon_redeemer` - Weapon
-
-`ammo_nuke` - Ammo box
-
-`nuke` - Projectile
-
-AMMO NAME
-
+AMMO NAME  
 `nuke`
 
 REGISTRATION FUNCTIONS
-`redeemer::Register();`
-
-Also
-
-`array<bool> g_bIsNukeFlying(33);`
-
-Needs to be put somewhere, such as in a map script.
+`hlwe_redeemer::Register();`
 
 
 <BR>
-<BR>
+
 
 # SCIPG
 
