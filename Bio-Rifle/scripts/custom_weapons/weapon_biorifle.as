@@ -1,22 +1,32 @@
-namespace biorifle
+namespace hlwe_biorifle
 {
 
+const int BR_SLOT						= 3;
+const int BR_POSITION				= 10;
 const int BIORIFLE_DAMAGE		= 60;
 const int BIORIFLE_WEIGHT		= 36;
-const int BR_MAX_CLIP			= 18;
+const int BR_MAX_CLIP				= 18;
 const int BR_DEFAULT_GIVE		= BR_MAX_CLIP;
-const int BR_MAX_CARRY			= 72;
+const int BR_MAX_CARRY				= 72;
 const int BIOMASS_TIMER			= 1000;
 
-const string BR_MODEL_CLIP		= "models/w_weaponbox.mdl";
-const string BR_MODEL_VIEW		= "models/custom_weapons/biorifle/v_biorifle.mdl";
-const string BR_MODEL_PLAYER	= "models/custom_weapons/biorifle/p_biorifle.mdl";
+const string MODEL_MAG				= "models/w_weaponbox.mdl";
+const string MODEL_VIEW			= "models/custom_weapons/biorifle/v_biorifle.mdl";
+const string MODEL_PLAYER		= "models/custom_weapons/biorifle/p_biorifle.mdl";
 const string BR_SOUND_FIRE		= "custom_weapons/biorifle/biorifle_fire.wav";
 const string BR_SOUND_DRY		= "custom_weapons/biorifle/biorifle_dryfire.wav";
 
-const int SF_DETONATE = 0x0001;
-const float ATTN_LOW_HIGH = 0.5;
-const float BM_EXPLOSION_VOLUME = 0.5;
+const string BIOMASS_MODEL = "models/custom_weapons/biorifle/w_biomass.mdl";
+const string BIOMASS_EXPLOSION1 = "sprites/explode1.spr";
+const string BIOMASS_EXPLOSION2 = "sprites/spore_exp_01.spr";
+const string BIOMASS_EXPLOSION3 = "sprites/spore_exp_c_01.spr";
+const string BIOMASS_EXPLOSION_WATER = "sprites/WXplo1.spr";
+
+const string BIOMASS_SOUND_HIT1 = "custom_weapons/biorifle/bustflesh1.wav";
+const string BIOMASS_SOUND_HIT2 = "custom_weapons/biorifle/bustflesh2.wav";
+const string BIOMASS_SOUND_EXPL = "custom_weapons/biorifle/biomass_exp.wav";
+
+const int SF_DETONATE				= 0x0001;
 
 enum biomasscode_e
 {
@@ -36,21 +46,31 @@ enum biorifle_e
 	BIORIFLE_HOLSTER
 };
 
-class CWeaponBiorifle : ScriptBasePlayerWeaponEntity
+class weapon_biorifle : ScriptBasePlayerWeaponEntity
 {
+	protected CBasePlayer@ m_pPlayer
+	{
+		get const { return cast<CBasePlayer@>(self.m_hPlayer.GetEntity()); }
+		set { self.m_hPlayer = EHandle(@value); }
+	}
+
 	void Spawn()
 	{
-		self.Precache();
-		g_EntityFuncs.SetModel( self, self.GetW_Model(BR_MODEL_PLAYER) );
+		Precache();
+
+		g_EntityFuncs.SetModel( self, self.GetW_Model(MODEL_PLAYER) );
+		pev.sequence = 1;
 		self.m_iDefaultAmmo = BR_DEFAULT_GIVE;
-		self.pev.sequence = 1;
+		self.m_flCustomDmg = pev.dmg;
+
 		self.FallInit();
 	}
 
 	void Precache()
 	{
-		g_Game.PrecacheModel( BR_MODEL_VIEW );
-		g_Game.PrecacheModel( BR_MODEL_PLAYER );
+		self.PrecacheCustomModels();
+		g_Game.PrecacheModel( MODEL_VIEW );
+		g_Game.PrecacheModel( MODEL_PLAYER );
 		
 		g_Game.PrecacheGeneric( "sound/" + BR_SOUND_FIRE );
 		g_Game.PrecacheGeneric( "sound/" + BR_SOUND_DRY );
@@ -58,32 +78,33 @@ class CWeaponBiorifle : ScriptBasePlayerWeaponEntity
 		g_SoundSystem.PrecacheSound( BR_SOUND_FIRE );
 		g_SoundSystem.PrecacheSound( BR_SOUND_DRY );
 
-		g_Game.PrecacheModel( "sprites/explode1.spr" );
-		g_Game.PrecacheModel( "sprites/spore_exp_01.spr" );
-		g_Game.PrecacheModel( "sprites/spore_exp_c_01.spr" );
-		g_Game.PrecacheModel( "sprites/WXplo1.spr" );
-		
-		g_Game.PrecacheModel( "models/custom_weapons/biorifle/w_biomass.mdl" );
-		g_Game.PrecacheGeneric( "sound/custom_weapons/biorifle/bustflesh1.wav" );
-		g_Game.PrecacheGeneric( "sound/custom_weapons/biorifle/bustflesh2.wav" );
-		g_Game.PrecacheGeneric( "sound/custom_weapons/biorifle/biomass_exp.wav" );
-		g_SoundSystem.PrecacheSound( "custom_weapons/biorifle/bustflesh1.wav" );
-		g_SoundSystem.PrecacheSound( "custom_weapons/biorifle/bustflesh2.wav" );
-		g_SoundSystem.PrecacheSound( "custom_weapons/biorifle/biomass_exp.wav" );
+		g_Game.PrecacheModel( BIOMASS_EXPLOSION1 );
+		g_Game.PrecacheModel( BIOMASS_EXPLOSION2 );
+		g_Game.PrecacheModel( BIOMASS_EXPLOSION3 );
+		g_Game.PrecacheModel( BIOMASS_EXPLOSION_WATER );
+		g_Game.PrecacheModel( BIOMASS_MODEL );
+		g_Game.PrecacheModel( MODEL_MAG );
+
+		g_SoundSystem.PrecacheSound( BIOMASS_SOUND_HIT1 );
+		g_SoundSystem.PrecacheSound( BIOMASS_SOUND_HIT2 );
+		g_SoundSystem.PrecacheSound( BIOMASS_SOUND_EXPL );
+		g_Game.PrecacheGeneric( "sound/" + BIOMASS_SOUND_HIT1 );
+		g_Game.PrecacheGeneric( "sound/" + BIOMASS_SOUND_HIT2 );
+		g_Game.PrecacheGeneric( "sound/" + BIOMASS_SOUND_EXPL );
 
 		//Precache these for downloading
 		g_Game.PrecacheGeneric( "sprites/custom_weapons/biorifle.spr" );
 		g_Game.PrecacheGeneric( "sprites/custom_weapons/biorifle_crosshairs.spr" );
-		g_Game.PrecacheGeneric( "sprites/custom_weapons/weapon_biorifle.txt" );
+		g_Game.PrecacheGeneric( "sprites/custom_weapons/superweapons/weapon_biorifle.txt" );
 	}
 
 	bool GetItemInfo( ItemInfo& out info )
 	{
 		info.iMaxAmmo1 	= BR_MAX_CARRY;
 		info.iMaxClip 	= BR_MAX_CLIP;
-		info.iSlot 		= 5;
-		info.iPosition 	= 5;
-		info.iFlags 	= ITEM_FLAG_SELECTONEMPTY;
+		info.iSlot 		= BR_SLOT-1;
+		info.iPosition 	= BR_POSITION-1;
+		info.iFlags 	= ITEM_FLAG_SELECTONEMPTY | ITEM_FLAG_NOAUTORELOAD;
 		info.iWeight 	= BIORIFLE_WEIGHT;
 
 		return true;
@@ -91,15 +112,16 @@ class CWeaponBiorifle : ScriptBasePlayerWeaponEntity
 	
 	bool AddToPlayer( CBasePlayer@ pPlayer )
 	{
-		if( BaseClass.AddToPlayer( pPlayer ) )
-		{
-			NetworkMessage message( MSG_ONE, NetworkMessages::WeapPickup, pPlayer.edict() );
-				message.WriteLong( self.m_iId );
-			message.End();
-			return true;
-		}
-		
-		return false;
+		if( !BaseClass.AddToPlayer(pPlayer) )
+			return false;
+
+		@m_pPlayer = pPlayer;
+
+		NetworkMessage biorifle( MSG_ONE, NetworkMessages::WeapPickup, pPlayer.edict() );
+			biorifle.WriteLong( self.m_iId );
+		biorifle.End();
+
+		return true;
 	}
 
 	bool PlayEmptySound()
@@ -108,7 +130,7 @@ class CWeaponBiorifle : ScriptBasePlayerWeaponEntity
 		{
 			self.m_bPlayEmptySound = false;
 			
-			g_SoundSystem.EmitSound( self.m_pPlayer.edict(), CHAN_WEAPON, BR_SOUND_DRY, 0.8, ATTN_NORM );
+			g_SoundSystem.EmitSound( m_pPlayer.edict(), CHAN_WEAPON, BR_SOUND_DRY, 0.8, ATTN_NORM );
 		}
 		
 		return false;
@@ -116,63 +138,54 @@ class CWeaponBiorifle : ScriptBasePlayerWeaponEntity
 
 	bool Deploy()
 	{
-		return self.DefaultDeploy( self.GetV_Model( BR_MODEL_VIEW ), self.GetP_Model( BR_MODEL_PLAYER ), BIORIFLE_DRAW, "gauss" );
+		bool bResult;
+		{
+			bResult = self.DefaultDeploy( self.GetV_Model(MODEL_VIEW), self.GetP_Model(MODEL_PLAYER), BIORIFLE_DRAW, "gauss" );
+			self.m_flTimeWeaponIdle = self.m_flNextPrimaryAttack = self.m_flNextSecondaryAttack = g_Engine.time + 1.0;
+
+			return bResult;
+		}
 	}
-	
-	void Holster( int skiplocal = 0 )
-	{
-		self.m_fInReload = false;
-		self.m_pPlayer.m_flNextAttack = g_Engine.time + 0.9;
-		self.SendWeaponAnim( BIORIFLE_HOLSTER );
-	}
-	
-	float WeaponTimeBase()
-	{
-		return g_Engine.time;
-	}
-	
+
 	void PrimaryAttack()
 	{
 		if( self.m_iClip <= 0 )
 		{
 			self.PlayEmptySound();
-			self.m_flNextPrimaryAttack = WeaponTimeBase() + 0.15;
+			self.m_flNextPrimaryAttack = g_Engine.time + 0.15;
 			return;
 		}
 
 		--self.m_iClip;
 		//++m_iFiredAmmo; //Used for dropping clip on the ground when out of ammo. Might be implemented in the future.
-		self.m_pPlayer.SetAnimation( PLAYER_ATTACK1 );
+		m_pPlayer.SetAnimation( PLAYER_ATTACK1 );
 		self.SendWeaponAnim( BIORIFLE_FIRE );
 
-		Math.MakeVectors( self.m_pPlayer.pev.v_angle + self.m_pPlayer.pev.punchangle );
-		ShootBiomass( self.m_pPlayer.pev, self.m_pPlayer.pev.origin + self.m_pPlayer.pev.view_ofs + g_Engine.v_forward * 16 + g_Engine.v_right * 7 + g_Engine.v_up * -8, g_Engine.v_forward * 3000, BIOMASS_TIMER );
-		g_SoundSystem.EmitSoundDyn( self.m_pPlayer.edict(), CHAN_WEAPON, BR_SOUND_FIRE, 1, ATTN_NORM, 0, 94 + Math.RandomLong( 0, 0xF ) );
+		Math.MakeVectors( m_pPlayer.pev.v_angle + m_pPlayer.pev.punchangle );
+		ShootBiomass( m_pPlayer.pev.origin + m_pPlayer.pev.view_ofs + g_Engine.v_forward * 16 + g_Engine.v_right * 7 + g_Engine.v_up * -8, g_Engine.v_forward * 3000, BIOMASS_TIMER );
+		g_SoundSystem.EmitSoundDyn( m_pPlayer.edict(), CHAN_WEAPON, BR_SOUND_FIRE, 1, ATTN_NORM, 0, 94 + Math.RandomLong( 0, 0xF ) );
 
-
-		if( self.m_iClip == 0 && self.m_pPlayer.m_rgAmmo( self.m_iPrimaryAmmoType ) <= 0 )
-			self.m_pPlayer.SetSuitUpdate( "!HEV_AMO0", false, 0 );
+		if( self.m_iClip == 0 && m_pPlayer.m_rgAmmo( self.m_iPrimaryAmmoType ) <= 0 )
+			m_pPlayer.SetSuitUpdate( "!HEV_AMO0", false, 0 );
 
 		self.m_flNextPrimaryAttack = g_Engine.time + 0.3;
 		self.m_flNextSecondaryAttack = g_Engine.time + 0.1;
 		self.m_flTimeWeaponIdle = g_Engine.time + 2;
 		
-		self.m_pPlayer.pev.punchangle.x -= Math.RandomFloat( -2,5 );
-		self.m_pPlayer.pev.punchangle.y -= 1;
+		m_pPlayer.pev.punchangle.x -= Math.RandomFloat( -2, 5 );
+		m_pPlayer.pev.punchangle.y -= 1;
 	}
 
 	void SecondaryAttack()
 	{
-		edict_t@ pPlayer = self.m_pPlayer.edict();
 		CBaseEntity@ pBioCharge = null;
 
-		while( ( @pBioCharge = g_EntityFuncs.FindEntityInSphere( pBioCharge, self.m_pPlayer.pev.origin, 16384, "biomass", "classname" ) ) !is null )
+		while( ( @pBioCharge = g_EntityFuncs.FindEntityInSphere( pBioCharge, m_pPlayer.pev.origin, 16384, "biomass", "classname" ) ) !is null )
 		{
-			if( pBioCharge.pev.owner is pPlayer )
-			{
-				pBioCharge.Use( self.m_pPlayer, self.m_pPlayer, USE_ON, 0 );
-			}
+			if( pBioCharge.pev.owner is m_pPlayer.edict() )
+				pBioCharge.Use( m_pPlayer, m_pPlayer, USE_ON, 0 );
 		}
+
 		self.m_flNextPrimaryAttack = g_Engine.time + 0.1;
 		self.m_flNextSecondaryAttack = g_Engine.time + 0.1;
 	}
@@ -191,10 +204,10 @@ class CWeaponBiorifle : ScriptBasePlayerWeaponEntity
 			return;
 
 		int iAnim;
-		switch( Math.RandomLong( 0, 2 ) )
+		switch( Math.RandomLong(0, 2) )
 		{
-			case 0:	iAnim = BIORIFLE_IDLE2;	break;
-			case 1:	iAnim = BIORIFLE_IDLE3;	break;
+			case 0: iAnim = BIORIFLE_IDLE2; break;
+			case 1: iAnim = BIORIFLE_IDLE3; break;
 			case 2: iAnim = BIORIFLE_IDLE; break;
 		}
 
@@ -207,12 +220,12 @@ class CWeaponBiorifle : ScriptBasePlayerWeaponEntity
 		//edict_t@ pFind = g_EntityFuncs.FindEntityByClassname( null, "biomass" );
 		CBaseEntity@ pFind = g_EntityFuncs.FindEntityByClassname( null, "biomass" );
 
-		while( !FNullEnt( pFind ) )
+		while( pFind !is null )
 		{
 			//CBaseEntity@ pEnt = CBaseEntity::Instance( pFind );
 			CBaseEntity@ pEnt = pFind;
-			//CBiomass@ pBioCharge = (CBiomass *)pEnt;
-			CBiomass@ pBiocharge = cast<CBiomass@>(pEnt);
+			//biomass@ pBioCharge = (biomass *)pEnt;
+			biomass@ pBiocharge = cast<biomass@>(pEnt);
 
 			if( pBioCharge !is null )
 			{
@@ -223,49 +236,29 @@ class CWeaponBiorifle : ScriptBasePlayerWeaponEntity
 		}
 	}
 */
-}
-
-class BRAmmoBox : ScriptBasePlayerAmmoEntity
-{	
-	void Spawn()
-	{ 
-		Precache();
-		g_EntityFuncs.SetModel( self, BR_MODEL_CLIP );
-		BaseClass.Spawn();
-	}
-	
-	void Precache()
+	void ShootBiomass( Vector vecStart, Vector vecVelocity, float flTime )
 	{
-		g_Game.PrecacheModel( BR_MODEL_CLIP );
-		g_SoundSystem.PrecacheSound( "items/9mmclip1.wav" );
-	}
-	
-	bool AddAmmo( CBaseEntity@ pOther )
-	{ 
-		int iGive;
+		CBaseEntity@ pBiomass = g_EntityFuncs.Create( "biomass", vecStart, g_vecZero, true, m_pPlayer.edict() );
 
-		iGive = BR_DEFAULT_GIVE;
+		pBiomass.pev.velocity = vecVelocity + g_Engine.v_right * Math.RandomFloat(-50, 50) + g_Engine.v_up * Math.RandomFloat(-50, 50);
+		pBiomass.pev.spawnflags = SF_DETONATE;
+		pBiomass.pev.frags = flTime;
 
-		if( pOther.GiveAmmo( iGive, "biocharge", BR_MAX_CARRY ) != -1)
-		{
-			g_SoundSystem.EmitSound( self.edict(), CHAN_ITEM, "items/9mmclip1.wav", 1, ATTN_NORM );
-			return true;
-		}
-		return false;
+		if( self.m_flCustomDmg > 0 )
+			pBiomass.pev.dmg = self.m_flCustomDmg;
+		else
+			pBiomass.pev.dmg = BIORIFLE_DAMAGE;
+
+		g_EntityFuncs.DispatchSpawn( pBiomass.edict() );
 	}
 }
 
-class CBiomass : ScriptBaseMonsterEntity
+class biomass : ScriptBaseMonsterEntity
 {
-	string BIOMASS_MODEL = "models/custom_weapons/biorifle/w_biomass.mdl";
-	string BIOMASS_SOUND_HIT1 = "custom_weapons/biorifle/bustflesh1.wav";
-	string BIOMASS_SOUND_HIT2 = "custom_weapons/biorifle/bustflesh2.wav";
-	string BIOMASS_SOUND_EXPL = "custom_weapons/biorifle/biomass_exp.wav";
-	
-	string BIOMASS_EXPLOSION1 = "sprites/explode1.spr";
-	string BIOMASS_EXPLOSION2 = "sprites/spore_exp_01.spr";
-	string BIOMASS_EXPLOSION3 = "sprites/spore_exp_c_01.spr";
-	string BIOMASS_EXPLOSION_WATER = "sprites/WXplo1.spr";	
+    protected CBasePlayer@ m_pOwner
+    {
+        get { return cast<CBasePlayer@>( g_EntityFuncs.Instance(pev.owner) ); }
+    }
 
 	Vector dist;
 	float angl_y, angl_x;
@@ -273,32 +266,27 @@ class CBiomass : ScriptBaseMonsterEntity
 	
 	void Spawn()
 	{
-		Precache();
 		g_EntityFuncs.SetModel( self, BIOMASS_MODEL );
+		g_EntityFuncs.SetSize( self.pev, g_vecZero, g_vecZero );
+		g_EntityFuncs.SetOrigin( self, pev.origin );
+
 		self.ResetSequenceInfo();
-		self.pev.movetype = MOVETYPE_BOUNCE;
-		self.pev.solid = SOLID_BBOX;
-		self.pev.rendermode = kRenderTransTexture;
-		self.pev.renderamt = 150;
-		self.pev.scale = 1.5;
-		@self.pev.enemy = null;
+
+		pev.movetype = MOVETYPE_BOUNCE;
+		pev.solid = SOLID_BBOX;
+		pev.rendermode = kRenderTransTexture;
+		pev.renderamt = 150;
+		pev.scale = 1.5;
+		@pev.enemy = null;
+
 		dist = g_vecZero;
 		angl_x = angl_y = 0;
 		b_attached = false;
-		g_EntityFuncs.SetSize( self.pev, g_vecZero, g_vecZero );
-	}
 
-	void Precache()
-	{
-/*
-		g_Game.PrecacheModel( BIOMASS_MODEL );
-		g_Game.PrecacheGeneric( "sound/" + BIOMASS_SOUND_HIT1 );
-		g_Game.PrecacheGeneric( "sound/" + BIOMASS_SOUND_HIT2 );
-		g_Game.PrecacheGeneric( "sound/" + BIOMASS_SOUND_EXPL );
-		g_SoundSystem.PrecacheSound( BIOMASS_SOUND_HIT1 );
-		g_SoundSystem.PrecacheSound( BIOMASS_SOUND_HIT2 );
-		g_SoundSystem.PrecacheSound( BIOMASS_SOUND_EXPL );
-*/
+		SetUse( UseFunction(this.DetonateUse) );
+		SetTouch( TouchFunction(this.SlideTouch) );
+		SetThink( ThinkFunction(this.StayInWorld) );
+		pev.nextthink = g_Engine.time + 0.1;
 	}
 
 	void Killed( entvars_t@ pevAttacker, int iGib )
@@ -306,7 +294,7 @@ class CBiomass : ScriptBaseMonsterEntity
 		g_EntityFuncs.Remove( self );
 	}
 
-	int	Classify()
+	int Classify()
 	{
 		return CLASS_PLAYER_BIOWEAPON;
 	}
@@ -315,26 +303,25 @@ class CBiomass : ScriptBaseMonsterEntity
 	{
 		TraceResult tr;
 		Vector vecEnd = pev.origin + pev.angles + g_Engine.v_forward*20;
-		g_Utility.TraceLine( self.pev.origin, vecEnd, ignore_monsters, self.edict(), tr );
+		g_Utility.TraceLine( pev.origin, vecEnd, ignore_monsters, self.edict(), tr );
 		g_Utility.DecalTrace( tr, DECAL_OFSCORCH1 + Math.RandomLong( 0,2 ) );
 
-		entvars_t@ pevOwner = self.pev.owner.vars;
-		g_WeaponFuncs.RadiusDamage( self.pev.origin, self.pev, pevOwner, self.pev.dmg, self.pev.dmg*3, CLASS_NONE, DMG_SONIC );
+		g_WeaponFuncs.RadiusDamage( pev.origin, self.pev, m_pOwner.pev, pev.dmg, pev.dmg*3, CLASS_NONE, DMG_BLAST );
 
-		if( g_EngineFuncs.PointContents( self.pev.origin ) == CONTENTS_WATER )
+		if( g_EngineFuncs.PointContents( pev.origin ) == CONTENTS_WATER )
 		{
-			te_explosion( self.pev.origin, BIOMASS_EXPLOSION_WATER, BIORIFLE_DAMAGE*1.2, 15, (TE_EXPLFLAG_NODLIGHTS | TE_EXPLFLAG_NOSOUND) );
-			g_SoundSystem.EmitSoundDyn( self.edict(), CHAN_VOICE, BIOMASS_SOUND_EXPL, BM_EXPLOSION_VOLUME, ATTN_LOW_HIGH, 0, 200 );
-			DynamicLight( self.pev.origin, 12, 170, 250, 0, 1, 20 );
-			g_Utility.Bubbles( self.pev.origin + Vector(0.2,0.2,0.5), self.pev.origin - Vector(0.2,0.2,0.5), 30 );
+			te_explosion( pev.origin, BIOMASS_EXPLOSION_WATER, BIORIFLE_DAMAGE*1.2, 15, (TE_EXPLFLAG_NODLIGHTS | TE_EXPLFLAG_NOSOUND) );
+			g_SoundSystem.EmitSoundDyn( self.edict(), CHAN_VOICE, BIOMASS_SOUND_EXPL, 0.5, 0.5, 0, 200 );
+			DynamicLight( pev.origin, 12, 170, 250, 0, 1, 20 );
+			g_Utility.Bubbles( pev.origin + Vector(0.2,0.2,0.5), pev.origin - Vector(0.2,0.2,0.5), 30 );
 		}
 		else
 		{
-			te_explosion( self.pev.origin, BIOMASS_EXPLOSION1, BIORIFLE_DAMAGE*1.2, 15, (TE_EXPLFLAG_NODLIGHTS | TE_EXPLFLAG_NOSOUND) );
-			te_explosion( self.pev.origin, BIOMASS_EXPLOSION2, BIORIFLE_DAMAGE*1.2, 15, (TE_EXPLFLAG_NODLIGHTS | TE_EXPLFLAG_NOSOUND) );
-			te_explosion( self.pev.origin, BIOMASS_EXPLOSION3, BIORIFLE_DAMAGE*1.3, 15, (TE_EXPLFLAG_NODLIGHTS | TE_EXPLFLAG_NOSOUND) );
-			g_SoundSystem.EmitSoundDyn( self.edict(), CHAN_VOICE, BIOMASS_SOUND_EXPL, BM_EXPLOSION_VOLUME, ATTN_LOW_HIGH, 0, PITCH_NORM );
-			DynamicLight( self.pev.origin, 20, 170, 250, 0, 1, 50 );
+			te_explosion( pev.origin, BIOMASS_EXPLOSION1, BIORIFLE_DAMAGE*1.2, 15, (TE_EXPLFLAG_NODLIGHTS | TE_EXPLFLAG_NOSOUND) );
+			te_explosion( pev.origin, BIOMASS_EXPLOSION2, BIORIFLE_DAMAGE*1.2, 15, (TE_EXPLFLAG_NODLIGHTS | TE_EXPLFLAG_NOSOUND) );
+			te_explosion( pev.origin, BIOMASS_EXPLOSION3, BIORIFLE_DAMAGE*1.3, 15, (TE_EXPLFLAG_NODLIGHTS | TE_EXPLFLAG_NOSOUND) );
+			g_SoundSystem.EmitSoundDyn( self.edict(), CHAN_VOICE, BIOMASS_SOUND_EXPL, 0.5, 0.5, 0, PITCH_NORM );
+			DynamicLight( pev.origin, 20, 170, 250, 0, 1, 50 );
 		}
 
 		g_EntityFuncs.Remove( self );
@@ -352,7 +339,7 @@ class CBiomass : ScriptBaseMonsterEntity
 
 	void SlideTouch( CBaseEntity@ pOther )
 	{
-		if( g_EngineFuncs.PointContents( self.pev.origin ) == CONTENTS_SKY )
+		if( g_EngineFuncs.PointContents( pev.origin ) == CONTENTS_SKY )
 		{
 			g_EntityFuncs.Remove( self );
 			return;
@@ -360,11 +347,10 @@ class CBiomass : ScriptBaseMonsterEntity
 
 		if( pOther.pev.takedamage == 1 && self.m_flNextAttack < g_Engine.time )
 		{
-			entvars_t@ pevOwner = self.pev.owner.vars;
 			switch( Math.RandomLong( 0,1 ) )
 			{
-				case 0:	pOther.TakeDamage( self.pev, pevOwner, 1, DMG_POISON ); break;
-				case 1:	pOther.TakeDamage( self.pev, pevOwner, 1, DMG_ACID ); break;
+				case 0:	pOther.TakeDamage( self.pev, m_pOwner.pev, 1, DMG_POISON ); break;
+				case 1:	pOther.TakeDamage( self.pev, m_pOwner.pev, 1, DMG_ACID ); break;
 			}
 			switch( Math.RandomLong( 0,1 ) )
 			{
@@ -382,16 +368,16 @@ class CBiomass : ScriptBaseMonsterEntity
 			}
 		}
 
-		self.pev.velocity = self.pev.velocity * 0.3;
+		pev.velocity = pev.velocity * 0.3;
 
-		if( !b_attached && self.pev.waterlevel == WATERLEVEL_DRY )
+		if( !b_attached && pev.waterlevel == WATERLEVEL_DRY )
 		{
 			b_attached = true;
-			self.pev.velocity = self.pev.avelocity = g_vecZero;
-			self.pev.movetype = MOVETYPE_FLY;
-			self.pev.solid = SOLID_NOT;
-			@self.pev.enemy = pOther.edict();
-			dist = self.pev.origin - pOther.pev.origin;
+			pev.velocity = pev.avelocity = g_vecZero;
+			pev.movetype = MOVETYPE_FLY;
+			pev.solid = SOLID_NOT;
+			@pev.enemy = pOther.edict();
+			dist = pev.origin - pOther.pev.origin;
 
 			if( pOther.IsPlayer() )
 			{
@@ -407,7 +393,7 @@ class CBiomass : ScriptBaseMonsterEntity
 
 	void StayInWorld()
 	{
-		self.pev.nextthink = g_Engine.time + 0.01;
+		pev.nextthink = g_Engine.time + 0.01;
 
 		if( !self.IsInWorld() )
 		{
@@ -415,8 +401,8 @@ class CBiomass : ScriptBaseMonsterEntity
 			return;
 		}
 
-		self.pev.frags--;
-		if( self.pev.frags <= 0 )
+		pev.frags--;
+		if( pev.frags <= 0 )
 		{
 			Detonate();
 			return;
@@ -424,16 +410,16 @@ class CBiomass : ScriptBaseMonsterEntity
 
 		self.StudioFrameAdvance();
 
-		if( self.pev.enemy !is null )
+		if( pev.enemy !is null )
 		{
-			CBaseEntity@ owner = g_EntityFuncs.Instance( self.pev.enemy );
+			CBaseEntity@ owner = g_EntityFuncs.Instance( pev.enemy );
 
 			if( owner is null )
 			{
 				b_attached = false;
-				@self.pev.enemy = null;
-				self.pev.movetype = MOVETYPE_TOSS;
-				self.pev.solid = SOLID_BBOX;
+				@pev.enemy = null;
+				pev.movetype = MOVETYPE_TOSS;
+				pev.solid = SOLID_BBOX;
 				return;
 			}
 
@@ -474,32 +460,33 @@ class CBiomass : ScriptBaseMonsterEntity
 				offset.z = 0;
 
 			//pev.origin = owner.pev.origin + offset;
-			self.pev.velocity = (owner.pev.origin + offset - self.pev.origin)/Math.max(0.05, g_Engine.frametime);
+			pev.velocity = (owner.pev.origin + offset - pev.origin)/Math.max(0.05, g_Engine.frametime);
 			return;
 		}
 		else if( b_attached )
 		{
 			b_attached = false;
-			@self.pev.enemy = null;
-			self.pev.movetype = MOVETYPE_TOSS;
-			self.pev.solid = SOLID_BBOX;
+			@pev.enemy = null;
+			pev.movetype = MOVETYPE_TOSS;
+			pev.solid = SOLID_BBOX;
 			return;
 		}
 
-		if( self.pev.waterlevel == WATERLEVEL_HEAD)
+		if( pev.waterlevel == WATERLEVEL_HEAD)
 		{
 			b_attached = false;
-			@self.pev.enemy = null;
-			self.pev.movetype = MOVETYPE_TOSS;
-			self.pev.solid = SOLID_BBOX;
+			@pev.enemy = null;
+			pev.movetype = MOVETYPE_TOSS;
+			pev.solid = SOLID_BBOX;
 		}
-		else if( self.pev.waterlevel == WATERLEVEL_DRY )
-			self.pev.movetype = MOVETYPE_BOUNCE;
+		else if( pev.waterlevel == WATERLEVEL_DRY )
+			pev.movetype = MOVETYPE_BOUNCE;
 		else
-			self.pev.velocity.z -= 8;
+			pev.velocity.z -= 8;
 	}
-	
-	void UseBiomass( entvars_t@ pevOwner, int code )
+
+	//unused??
+	/*void UseBiomass( entvars_t@ pevOwner, int code )
 	{
 		CBaseEntity@ pentFind;
 		edict_t@ pentOwner;
@@ -512,12 +499,12 @@ class CBiomass : ScriptBaseMonsterEntity
 
 		@pentFind = g_EntityFuncs.FindEntityByClassname( null, "biomass" );
 
-		while( !FNullEnt( pentFind ) )
+		while( pentFind !is null )
 		{
 			CBaseEntity@ pEnt = pentFind;
 			if( pEnt !is null )
 			{
-				if( self.pev.FlagBitSet(SF_DETONATE) && pEnt.pev.owner is pentOwner )
+				if( pev.FlagBitSet(SF_DETONATE) && pEnt.pev.owner is pentOwner )
 				{
 					if( code == BIOMASS_DETONATE )
 						pEnt.Use( pOwner, pOwner, USE_ON, 0 );
@@ -527,8 +514,8 @@ class CBiomass : ScriptBaseMonsterEntity
 			}
 			@pentFind = g_EntityFuncs.FindEntityByClassname( pentFind, "biomass" );
 		}
-	}
-	
+	}*/
+
 	private void te_explosion( Vector origin, string sprite, int scale, int frameRate, int flags )
 	{
 		NetworkMessage exp1(MSG_BROADCAST, NetworkMessages::SVC_TEMPENTITY);
@@ -560,31 +547,36 @@ class CBiomass : ScriptBaseMonsterEntity
 	}
 }
 
-CBiomass@ ShootBiomass( entvars_t@ pevOwner, Vector vecStart, Vector vecVelocity, float Time )
+class ammo_biocharge : ScriptBasePlayerAmmoEntity
 {
-	CBaseEntity@ cbeBiomass = g_EntityFuncs.CreateEntity( "biomass", null,  false);
-	CBiomass@ pBiomass = cast<CBiomass@>(CastToScriptClass(cbeBiomass));
-	g_EntityFuncs.SetOrigin( pBiomass.self, vecStart );
-	g_EntityFuncs.DispatchSpawn( pBiomass.self.edict() );
-	pBiomass.pev.velocity = vecVelocity + g_Engine.v_right * Math.RandomFloat(-50,50) + g_Engine.v_up * Math.RandomFloat(-50,50);
-	@pBiomass.pev.owner = pevOwner.pContainingEntity;
-	pBiomass.SetThink( ThinkFunction( pBiomass.StayInWorld ) );
-	pBiomass.pev.nextthink = g_Engine.time + 0.1;
-	pBiomass.SetUse( UseFunction( pBiomass.DetonateUse ) );
-	pBiomass.SetTouch( TouchFunction( pBiomass.SlideTouch ) );
-	pBiomass.pev.spawnflags = SF_DETONATE;
-	pBiomass.pev.frags = Time;
-	pBiomass.pev.dmg = BIORIFLE_DAMAGE;
+	void Spawn()
+	{ 
+		g_EntityFuncs.SetModel( self, MODEL_MAG );
+		BaseClass.Spawn();
+	}
 
-	return pBiomass;
+	bool AddAmmo( CBaseEntity@ pOther )
+	{ 
+		int iGive;
+
+		iGive = BR_DEFAULT_GIVE;
+
+		if( pOther.GiveAmmo( iGive, "biocharge", BR_MAX_CARRY ) != -1)
+		{
+			g_SoundSystem.EmitSound( self.edict(), CHAN_ITEM, "items/9mmclip1.wav", 1, ATTN_NORM );
+			return true;
+		}
+
+		return false;
+	}
 }
 
 void Register()
 {
-	g_CustomEntityFuncs.RegisterCustomEntity( "biorifle::CWeaponBiorifle", "weapon_biorifle" );
-	g_CustomEntityFuncs.RegisterCustomEntity( "biorifle::BRAmmoBox", "ammo_biocharge" );
-	g_CustomEntityFuncs.RegisterCustomEntity( "biorifle::CBiomass", "biomass" );
-	g_ItemRegistry.RegisterWeapon( "weapon_biorifle", "custom_weapons", "biocharge" );
+	g_CustomEntityFuncs.RegisterCustomEntity( "hlwe_biorifle::ammo_biocharge", "ammo_biocharge" );
+	g_CustomEntityFuncs.RegisterCustomEntity( "hlwe_biorifle::biomass", "biomass" );
+	g_CustomEntityFuncs.RegisterCustomEntity( "hlwe_biorifle::weapon_biorifle", "weapon_biorifle" );
+	g_ItemRegistry.RegisterWeapon( "weapon_biorifle", "custom_weapons/superweapons", "biocharge" );
 }
 
-} //namespace biorifle END
+} //namespace hlwe_biorifle END
