@@ -13,6 +13,7 @@ const int BIOMASS_TIMER			= 1000;
 const string MODEL_MAG				= "models/w_weaponbox.mdl";
 const string MODEL_VIEW			= "models/custom_weapons/biorifle/v_biorifle.mdl";
 const string MODEL_PLAYER		= "models/custom_weapons/biorifle/p_biorifle.mdl";
+const string MODEL_WORLD		= "models/custom_weapons/biorifle/w_biorifle.mdl";
 const string BR_SOUND_FIRE		= "custom_weapons/biorifle/biorifle_fire.wav";
 const string BR_SOUND_DRY		= "custom_weapons/biorifle/biorifle_dryfire.wav";
 
@@ -58,8 +59,8 @@ class weapon_biorifle : ScriptBasePlayerWeaponEntity
 	{
 		Precache();
 
-		g_EntityFuncs.SetModel( self, self.GetW_Model(MODEL_PLAYER) );
-		pev.sequence = 1;
+		g_EntityFuncs.SetModel( self, self.GetW_Model(MODEL_WORLD) );
+
 		self.m_iDefaultAmmo = BR_DEFAULT_GIVE;
 		self.m_flCustomDmg = pev.dmg;
 
@@ -71,6 +72,7 @@ class weapon_biorifle : ScriptBasePlayerWeaponEntity
 		self.PrecacheCustomModels();
 		g_Game.PrecacheModel( MODEL_VIEW );
 		g_Game.PrecacheModel( MODEL_PLAYER );
+		g_Game.PrecacheModel( MODEL_WORLD );
 		
 		g_Game.PrecacheGeneric( "sound/" + BR_SOUND_FIRE );
 		g_Game.PrecacheGeneric( "sound/" + BR_SOUND_DRY );
